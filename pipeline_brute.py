@@ -146,13 +146,13 @@ for image_num in range(len(image_paths)):
     
 
     # save the warped image
-    output_dir = "output"
+    output_dir = "brute_output"
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"warped_{image_num}.jpg")
     cv2.imwrite(output_path, warped)
     
 # save error list to txt
 
-with open("output/error.txt", "w") as f:
+with open("brute_output/error.txt", "w") as f:
     for item in error:
         f.write("%s\n" % item)

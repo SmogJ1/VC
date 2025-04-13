@@ -293,28 +293,46 @@ def rotate_board(warped, knight_position, image_num=-1):
     return rotated_chessboard
 
 
+
+
+
+
+
+
+def get_image_output(image_path, i=-1):
+
+    results = dict()
+    results["image"] = image_path
+
+    image = cv2.imread(image_path)
+    table_contour = get_table_contour(image, image_num=i)
+    masked_image = get_masked_image(image, table_contour, image_num=i)
+    countours_ = get_contours(masked_image, image_num=i)
+    contours = remove_boarder_contours(countours_, masked_image, image_num=i)
+    chessboard_contour_ = get_chessboard_contours(masked_image, image, contours, image_num=i)
+    chessboard_contour = approx_chessboard_contour(chessboard_contour_, image, image_num=i)
+    corners = get_corners(chessboard_contour,image, image_num=i)
+    warped = get_warped_image(image, corners, image_num=i)
+    knight_position = get_knight_position(warped, image_num=i)
+    rotated_image = rotate_board(warped, knight_position, image_num=i)
+
+    # save remaining results to dict, it's ready
+
+    return results
+
+
+
+
 def main(json_path):
 
+    final_results = []
+
     image_paths = get_list(json_path)
-
     for i in range(len(image_paths)):
-
         try:
-            path = image_paths[i]
-
-            # i = -1 #UNCOMMENT THIS LINE TO NOT SAVE DEBUG IMAGES
-
-            image = cv2.imread(path)
-            table_contour = get_table_contour(image, image_num=i)
-            masked_image = get_masked_image(image, table_contour, image_num=i)
-            countours_ = get_contours(masked_image, image_num=i)
-            contours = remove_boarder_contours(countours_, masked_image, image_num=i)
-            chessboard_contour_ = get_chessboard_contours(masked_image, image, contours, image_num=i)
-            chessboard_contour = approx_chessboard_contour(chessboard_contour_, image, image_num=i)
-            corners = get_corners(chessboard_contour,image, image_num=i)
-            warped = get_warped_image(image, corners, image_num=i)
-            knight_position = get_knight_position(warped, image_num=i)
-            rotated_image = rotate_board(warped, knight_position, image_num=i)
+            # get_image_output(image_paths[i])
+            result_dict = get_image_output(image_paths[i], i=i) # USE THIS FOR DEBUGGING
+            final_results.append(result_dict)
 
         except Exception as e:
             # append error on image number to debug/error.txt
@@ -325,7 +343,13 @@ def main(json_path):
             print(f"Error on image {i}: {e}")
             continue
 
+    # save final results to json
+    output_dir = "output"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, "final_results.json")
+    with open(output_path, "w") as f:
+        json.dump(final_results, f, indent=4)
+    print(f"Final results saved to {output_path}")
 
-
-json_path = "data/input.json"
+json_path = "data/json_example_task1/input.json"
 main(json_path)
