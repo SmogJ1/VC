@@ -330,8 +330,8 @@ def main(json_path):
     image_paths = get_list(json_path)
     for i in range(len(image_paths)):
         try:
-            # get_image_output(image_paths[i])
-            result_dict = get_image_output(image_paths[i], i=i) # USE THIS FOR DEBUGGING
+            # get_image_output(image_paths[i]) # USE THIS FOR ONLY FINAL OUTPUT
+            result_dict = get_image_output(image_paths[i], i=i) # USE THIS FOR SAVING IMAGES TOO
             final_results.append(result_dict)
 
         except Exception as e:
