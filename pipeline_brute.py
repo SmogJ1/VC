@@ -13,14 +13,11 @@ error = []
 
 for image_num in range(len(image_paths)):
 
-
-
-
     image = cv2.imread(image_paths[image_num])
 
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    lower_brown = np.array([0, 25, 100])
+    lower_brown = np.array([0, 22, 107])
     upper_brown = np.array([30, 255, 255])
 
     mask = cv2.inRange(hsv, lower_brown, upper_brown)

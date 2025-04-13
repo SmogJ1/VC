@@ -1,3 +1,3 @@
-Error: images/G028_IMG015.jpg of num 21 has 6 corners
-Error: images/G087_IMG093.jpg of num 30 has no contours
+Error: images/G061_IMG098.jpg of num 9 has 6 corners
+Error: images/G028_IMG015.jpg of num 21 has 5 corners
 Error: images/G061_IMG080.jpg of num 32 has 3 corners
