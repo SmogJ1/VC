@@ -15,7 +15,7 @@ def get_list(json_path):
 def get_table_contour(image, image_num=-1):
 
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower_brown = np.array([0, 15, 100])
+    lower_brown = np.array([0, 22, 107])
     upper_brown = np.array([30, 255, 255])
     mask = cv2.inRange(hsv, lower_brown, upper_brown)
 
@@ -51,7 +51,7 @@ def get_masked_image(image, table_contour, image_num=-1):
 def get_contours(masked_image, image_num=-1):
     hsv = cv2.cvtColor(masked_image, cv2.COLOR_BGR2HSV)
 
-    lower_brown = np.array([0, 15, 100])
+    lower_brown = np.array([0, 22, 107])
     upper_brown = np.array([30, 255, 255])
     table_color_mask = cv2.inRange(hsv, lower_brown, upper_brown)
     chessboard_mask = cv2.bitwise_not(table_color_mask)
@@ -260,8 +260,6 @@ def rotate_knight_to_bottom_left(image, knight_pos):
     
     x, y = knight_pos 
 
-    print(f"Knight position: ({x}, {y}) | Center: ({cx}, {cy})")
-
     if x < cx and y < cy:
         angle = 90  
     elif x >= cx and y < cy:
@@ -271,7 +269,6 @@ def rotate_knight_to_bottom_left(image, knight_pos):
     else:
         angle = 0  
 
-    print(f"Rotating {angle}º to place the knight in the bottom-left corner")
 
     if angle == 90:
         rotated = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
@@ -301,23 +298,34 @@ def main(json_path):
     image_paths = get_list(json_path)
 
     for i in range(len(image_paths)):
-        path = image_paths[i]
 
-        # i = -1 #UNCOMMENT THIS LINE TO NOT SAVE DEBUG IMAGES
+        try:
+            path = image_paths[i]
 
-        image = cv2.imread(path)
-        table_contour = get_table_contour(image, image_num=i)
-        masked_image = get_masked_image(image, table_contour, image_num=i)
-        countours_ = get_contours(masked_image, image_num=i)
-        contours = remove_boarder_contours(countours_, masked_image, image_num=i)
-        chessboard_contour_ = get_chessboard_contours(masked_image, image, contours, image_num=i)
-        chessboard_contour = approx_chessboard_contour(chessboard_contour_, image, image_num=i)
-        corners = get_corners(chessboard_contour,image, image_num=i)
-        warped = get_warped_image(image, corners, image_num=i)
-        knight_position = get_knight_position(warped, image_num=i)
-        rotated_image = rotate_board(warped, knight_position, image_num=i)
+            # i = -1 #UNCOMMENT THIS LINE TO NOT SAVE DEBUG IMAGES
+
+            image = cv2.imread(path)
+            table_contour = get_table_contour(image, image_num=i)
+            masked_image = get_masked_image(image, table_contour, image_num=i)
+            countours_ = get_contours(masked_image, image_num=i)
+            contours = remove_boarder_contours(countours_, masked_image, image_num=i)
+            chessboard_contour_ = get_chessboard_contours(masked_image, image, contours, image_num=i)
+            chessboard_contour = approx_chessboard_contour(chessboard_contour_, image, image_num=i)
+            corners = get_corners(chessboard_contour,image, image_num=i)
+            warped = get_warped_image(image, corners, image_num=i)
+            knight_position = get_knight_position(warped, image_num=i)
+            rotated_image = rotate_board(warped, knight_position, image_num=i)
+
+        except Exception as e:
+            # append error on image number to debug/error.txt
+            error_path = "debug/error.txt"
+            os.makedirs(os.path.dirname(error_path), exist_ok=True)
+            with open(error_path, "a") as f:
+                f.write(f"Error on image {i}: {e}\n")
+            print(f"Error on image {i}: {e}")
+            continue
 
 
 
-json_path = "data/json_example_task1/input.json"
+json_path = "data/input.json"
 main(json_path)
