@@ -1,0 +1,1 @@
+Both pipelines failed for images/G028_IMG015.jpg: A: images/G028_IMG015.jpg has 5 corners instead of 4 | B: No valid contours found in images/G028_IMG015.jpg
