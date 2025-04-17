@@ -52,7 +52,14 @@ for image_num, image_path in enumerate(image_paths):
 
     chessboard_mask = np.zeros_like(image)
     cv2.drawContours(chessboard_mask, [table_contour], -1, (255, 255, 255), thickness=cv2.FILLED)
+
+        # Expand the mask region by a fixed number of pixels
+    expand_kernel = np.ones((60, 60), np.uint8)  # Adjust size as needed
+    chessboard_mask = cv2.dilate(chessboard_mask, expand_kernel, iterations=1)
+
+    # Apply the expanded mask
     masked_image = cv2.bitwise_and(image, chessboard_mask)
+
 
     # Save masked table
     cv2.imwrite(f"{image_output_dir}/table_masked.jpg", masked_image)
