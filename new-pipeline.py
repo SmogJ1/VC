@@ -78,8 +78,8 @@ def extract_chessboard_pipeline_a(image, image_path):
 def extract_chessboard_pipeline_b(image, image_path):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(cv2.GaussianBlur(gray, (5, 5), 0), 50, 150)
-    edges = cv2.dilate(edges, np.ones((5, 5), np.uint8), iterations=1)
-    edges = cv2.erode(edges, np.ones((5, 5), np.uint8), iterations=1)
+    edges = cv2.dilate(edges, np.ones((25, 25), np.uint8), iterations=1)
+    edges = cv2.erode(edges, np.ones((25, 25), np.uint8), iterations=1)
 
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
@@ -88,7 +88,6 @@ def extract_chessboard_pipeline_b(image, image_path):
     table_contour = max(contours, key=cv2.contourArea)
     mask = np.zeros_like(image)
     cv2.drawContours(mask, [table_contour], -1, (255, 255, 255), cv2.FILLED)
-    mask = cv2.dilate(mask, np.ones((75, 75), np.uint8), iterations=1)
     masked_image = cv2.bitwise_and(image, mask)
 
     if len(mask.shape) == 3:
